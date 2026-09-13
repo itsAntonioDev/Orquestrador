@@ -1,0 +1,39 @@
+# Pipeline executado em containers Docker.
+# Execute com:  orquestrador run examples/docker.yml --executor docker
+name: build-em-containers
+
+image: python:3.11-slim          # imagem padrão dos jobs
+
+env:
+  PIP_DISABLE_PIP_VERSION_CHECK: "1"
+
+jobs:
+  info:
+    image: alpine:3.20             # sobrescreve a imagem padrão
+    steps:
+      - name: sistema do container
+        run: |
+          cat /etc/os-release | head -n 2
+          echo "workspace: $ORQ_WORKSPACE"
+
+  python:
+    needs: info
+    volumes:
+      - pip-cache:/root/.cache/pip           # volume nomeado (persistente entre execuções)
+      - ./artefatos:/artefatos               # relativo ao workspace
+    steps:
+      - name: versão do python
+        run: python --version
+      - name: gerar artefato
+        shell: python
+        run: |
+          import pathlib, platform
+          pathlib.Path("/artefatos/build.txt").write_text(platform.platform())
+          print("artefato gerado")
+      - name: step com timeout
+        run: sleep 30
+        timeout: 2
+        continue-on-error: true
+      - name: container continua disponível
+        if: always()
+        run: ls -la /artefatos

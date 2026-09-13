@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% from "_macros.html" import badge, time %}
+{% block title %}Projetos{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>Projetos</h1>
+</div>
+<div class="card">
+  {% if rows %}
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th>Projeto</th>
+          <th>Provedor</th>
+          <th>Repositório</th>
+          <th>Pipeline</th>
+          <th>Última execução</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in rows %}
+        <tr>
+          <td><a href="/runs?project={{ row.project.name | urlencode }}">{{ row.project.name }}</a></td>
+          <td>{{ row.project.provider.value }}</td>
+          <td>{{ row.project.repository }}</td>
+          <td><code>{{ row.project.pipeline }}</code></td>
+          <td>
+            {% if row.last_run %}
+            {{ badge(row.last_run.status) }}
+            <a href="/runs/{{ row.last_run.run_id }}">#{{ row.last_run.run_id }}</a>
+            <span class="muted small">{{ time(row.last_run.created_at) }}</span>
+            {% else %}
+            <span class="muted">nunca executado</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="empty">Nenhum projeto configurado. Veja <code>projects.example.yml</code>.</p>
+  {% endif %}
+</div>
+{% endblock %}

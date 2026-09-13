@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="card message">
+  <h1>{{ title }}</h1>
+  <p>{{ message }}</p>
+  <p><a href="/runs">← Voltar para as execuções</a></p>
+</div>
+{% endblock %}

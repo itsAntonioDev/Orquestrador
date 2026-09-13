@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% from "_macros.html" import badge, time %}
+{% block title %}{{ run.pipeline or run.project }} #{{ run.run_id }}{% endblock %}
+{% block content %}
+<div id="run-root" data-run-id="{{ run.run_id }}" data-ws-path="/ws/runs/{{ run.run_id }}">
+  <div class="page-header">
+    <div>
+      <p class="breadcrumb"><a href="/runs">Execuções</a> / {{ run.project }}</p>
+      <h1>{{ run.pipeline or run.project }} <span class="muted">#{{ run.run_id }}</span></h1>
+      {% if run.message %}<p class="commit-message">{{ run.message }}</p>{% endif %}
+    </div>
+    <div class="run-status">
+      <span id="run-status" class="badge badge-lg {{ run.status | status_class }}">{{ run.status | status_label }}</span>
+      <span id="live-indicator" class="live" data-state="connecting">conectando…</span>
+    </div>
+  </div>
+
+  <dl class="meta card">
+    <div><dt>Evento</dt><dd>{{ run.event }}{% if run.pull_request %} #{{ run.pull_request }}{% endif %}</dd></div>
+    <div><dt>Ref</dt><dd>{{ run.branch or run.tag or "-" }}{% if run.base_branch %} → {{ run.base_branch }}{% endif %}</dd></div>
+    <div><dt>Commit</dt><dd><code title="{{ run.commit }}">{{ run.commit | short_sha }}</code></dd></div>
+    <div><dt>Autor</dt><dd>{{ run.actor or "-" }}</dd></div>
+    <div><dt>Repositório</dt><dd>{{ run.repository }}</dd></div>
+    <div><dt>Duração</dt><dd id="run-duration">{{ run.duration | duration }}</dd></div>
+    <div><dt>Criada em</dt><dd>{{ time(run.created_at) }}</dd></div>
+  </dl>
+
+  <p id="run-reason" class="reason" {% if not run.reason %}hidden{% endif %}>{{ run.reason or "" }}</p>
+
+  <div class="run-body">
+    <aside class="jobs card" id="jobs" aria-label="Jobs e steps">
+      {% for job in run.jobs %}
+      <section class="job" data-job="{{ job.job_id }}">
+        <header class="job-header">
+          {{ badge(job.status) }}
+          <strong>{{ job.name }}</strong>
+          <span class="muted small">{{ job.duration | duration }}</span>
+        </header>
+        {% if job.error %}<p class="error small">{{ job.error }}</p>{% endif %}
+        <ul class="steps">
+          {% for step in job.steps %}
+          <li>
+            <button type="button" class="step" data-job="{{ job.job_id }}" data-step="{{ step.index }}">
+              <span class="dot {{ step.status | status_class }}" title="{{ step.status | status_label }}"></span>
+              <span class="step-name">{{ step.name }}</span>
+              {% if step.group %}<span class="group-tag" title="grupo paralelo">∥ {{ step.group }}</span>{% endif %}
+              <span class="muted small">{{ step.duration | duration }}</span>
+            </button>
+          </li>
+          {% endfor %}
+        </ul>
+      </section>
+      {% else %}
+      <p class="muted" id="no-jobs">Aguardando o início do pipeline…</p>
+      {% endfor %}
+    </aside>
+
+    <section class="logs card" aria-label="Logs">
+      <div class="logs-header">
+        <span id="log-title">Selecione um step</span>
+        <label class="small"><input type="checkbox" id="autoscroll" checked> rolar automaticamente</label>
+      </div>
+      <pre id="log-output" class="log-output" tabindex="0"></pre>
+    </section>
+  </div>
+</div>
+<script id="status-labels" type="application/json">{{ status_labels | tojson }}</script>
+<script src="/static/run.js" defer></script>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Execuções{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>Execuções</h1>
+  <form class="filters" method="get" action="/runs"
+        hx-get="/runs/table" hx-target="#runs-table" hx-swap="outerHTML" hx-trigger="change">
+    <label>
+      <span class="sr-only">Projeto</span>
+      <select name="project">
+        <option value="">Todos os projetos</option>
+        {% for name in projects %}
+        <option value="{{ name }}" {% if filters.project == name %}selected{% endif %}>{{ name }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>
+      <span class="sr-only">Status</span>
+      <select name="status">
+        <option value="">Todos os status</option>
+        {% for item in statuses %}
+        <option value="{{ item.value }}" {% if filters.status == item.value %}selected{% endif %}>{{ item | status_label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <noscript><button type="submit">Filtrar</button></noscript>
+  </form>
+</div>
+{% include "_runs_table.html" %}
+{% endblock %}

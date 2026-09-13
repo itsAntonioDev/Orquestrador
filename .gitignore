@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.eggs/
+
+# Ambientes
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+
+# Ferramentas
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Dados locais do orquestrador
+projects.yml
+*.db
+*.sqlite3
+workspaces/
+.orquestrador/
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+
+# IDE / SO
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

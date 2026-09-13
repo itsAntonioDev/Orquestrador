@@ -1,0 +1,7 @@
+{% macro badge(status) -%}
+<span class="badge {{ status | status_class }}">{{ status | status_label }}</span>
+{%- endmacro %}
+
+{% macro time(value) -%}
+{% if value %}<time datetime="{{ value | iso }}">{{ value | timestamp }}</time>{% else %}-{% endif %}
+{%- endmacro %}

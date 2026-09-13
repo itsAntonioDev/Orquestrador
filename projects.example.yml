@@ -1,0 +1,17 @@
+# Projetos (repositórios) aceitos pelo orquestrador.
+# Copie para projects.yml (ou aponte ORQ_PROJECTS_FILE) e ajuste.
+# Referências ${VAR} e ${VAR:-padrão} são lidas do ambiente — não versione segredos.
+projects:
+  - name: orquestrador
+    provider: github
+    repository: seu-usuario/orquestrador      # owner/repo
+    secret: ${GITHUB_WEBHOOK_SECRET}          # mesmo segredo configurado no webhook
+    pipeline: .orquestrador.yml               # caminho do pipeline dentro do repositório
+
+  - name: app-gitlab
+    provider: gitlab
+    repository: grupo/subgrupo/app            # path_with_namespace
+    secret: ${GITLAB_WEBHOOK_TOKEN}           # "Secret token" do webhook no GitLab
+    pipeline: ci/pipeline.yml
+    # clone_url é opcional; sem ele usa a URL enviada no webhook.
+    clone_url: https://gitlab.com/grupo/subgrupo/app.git

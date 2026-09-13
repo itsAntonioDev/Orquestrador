@@ -1,0 +1,46 @@
+# Pipeline de exemplo portável (Windows/Linux/macOS).
+# Execute com:  orquestrador run examples/hello.yml --branch main
+name: hello-orquestrador
+
+on:
+  push:
+    branches: [main]
+
+env:
+  GREETING: Olá
+
+jobs:
+  lint:
+    steps:
+      - name: verificar sintaxe
+        shell: python
+        run: |
+          import os
+          print(f"{os.environ['GREETING']} do job lint (run {os.environ['ORQ_RUN_ID']})")
+
+  test:
+    needs: lint
+    env:
+      SUITE: unit
+    steps:
+      - name: rodar testes
+        shell: python
+        run: |
+          import os
+          print("suite:", os.environ["SUITE"])
+      - name: passo tolerante a falhas
+        shell: python
+        continue-on-error: true
+        run: import sys; sys.exit("falha esperada, mas tolerada")
+      - name: limpeza
+        if: always()
+        run: echo limpando workspace
+
+  deploy:
+    needs: test
+    if: branch == 'main'
+    steps:
+      - name: deploy
+        shell: python
+        timeout: 30
+        run: print("deploy para produção a partir de", __import__("os").environ.get("ORQ_BRANCH"))

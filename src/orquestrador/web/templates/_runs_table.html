@@ -1,0 +1,49 @@
+{% from "_macros.html" import badge, time %}
+<div id="runs-table" class="card"
+     hx-get="/runs/table?{{ query }}" hx-trigger="every 3s" hx-swap="outerHTML">
+  {% if page.items %}
+  <div class="table-scroll">
+    <table class="runs">
+      <thead>
+        <tr>
+          <th>Status</th>
+          <th>Execução</th>
+          <th>Projeto</th>
+          <th>Evento</th>
+          <th>Ref</th>
+          <th>Commit</th>
+          <th>Autor</th>
+          <th class="num">Duração</th>
+          <th>Criada em</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for run in page.items %}
+        <tr>
+          <td>{{ badge(run.status) }}</td>
+          <td><a class="run-link" href="/runs/{{ run.run_id }}">{{ run.pipeline or run.run_id }}</a>
+            <div class="muted small">#{{ run.run_id }}</div></td>
+          <td>{{ run.project }}</td>
+          <td>{{ run.event }}{% if run.pull_request %} <span class="muted">#{{ run.pull_request }}</span>{% endif %}</td>
+          <td>{{ run.branch or run.tag or "-" }}</td>
+          <td><code>{{ run.commit | short_sha }}</code>
+            {% if run.message %}<div class="muted small truncate" title="{{ run.message }}">{{ run.message }}</div>{% endif %}</td>
+          <td>{{ run.actor or "-" }}</td>
+          <td class="num">{{ run.duration | duration }}</td>
+          <td>{{ time(run.created_at) }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <nav class="pagination" aria-label="Paginação">
+    <span class="muted">{{ page.items | length }} de {{ page.total }} execuções · página {{ page_number }}</span>
+    <span>
+      {% if has_previous %}<a href="/runs?{{ previous_query }}">← Anteriores</a>{% endif %}
+      {% if has_next %}<a href="/runs?{{ next_query }}">Próximas →</a>{% endif %}
+    </span>
+  </nav>
+  {% else %}
+  <p class="empty">Nenhuma execução encontrada. Configure um webhook e faça um push para começar.</p>
+  {% endif %}
+</div>

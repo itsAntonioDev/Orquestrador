@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Orquestrador{% endblock %} · Orquestrador CI/CD</title>
+  <link rel="stylesheet" href="/static/app.css">
+  <script src="/static/htmx.min.js" defer></script>
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/runs">
+      <span class="brand-mark" aria-hidden="true"></span>Orquestrador
+    </a>
+    <nav aria-label="Principal">
+      <a href="/runs" {% if active == "runs" %}aria-current="page"{% endif %}>Execuções</a>
+      <a href="/projects" {% if active == "projects" %}aria-current="page"{% endif %}>Projetos</a>
+      <a href="/docs">API</a>
+    </nav>
+    <span class="version">v{{ version }}</span>
+  </header>
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>
