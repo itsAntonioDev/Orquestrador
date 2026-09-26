@@ -266,7 +266,9 @@ class Job(StrictModel):
     def _validate_groups(self) -> Job:
         for step in self.steps:
             if step.group is not None and step.group not in self.groups:
-                raise ValueError(f"step '{step.name}' referencia grupo paralelo inexistente: {step.group}")
+                raise ValueError(
+                    f"step '{step.name}' referencia grupo paralelo inexistente: {step.group}"
+                )
         return self
 
     @field_validator("env", mode="before")

@@ -72,3 +72,4 @@ ignore = ["B008"]
 
 [tool.ruff.lint.per-file-ignores]
 "src/orquestrador/db/alembic/versions/*" = ["E501"]
+"tests/*" = ["E501", "RUF012"]

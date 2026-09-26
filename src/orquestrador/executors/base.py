@@ -11,7 +11,6 @@ torna seguro rodar vários jobs em paralelo com a mesma instância de executor.
 
 from __future__ import annotations
 
-import threading
 from abc import ABC, abstractmethod
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field
@@ -19,6 +18,7 @@ from types import TracebackType
 from typing import TYPE_CHECKING, ClassVar, Literal, Self
 
 if TYPE_CHECKING:
+    from orquestrador.execution.cancellation import CancelSignal
     from orquestrador.execution.context import RunContext
     from orquestrador.pipeline.models import Job
 
@@ -45,7 +45,7 @@ class CommandRequest:
         shell: Shell a usar; ``None`` = padrão do executor.
         working_directory: Diretório relativo ao workspace.
         timeout: Tempo limite em segundos.
-        cancel_event: Evento que, quando sinalizado, interrompe o comando.
+        cancel_event: Sinal (ex.: ``threading.Event``) que, quando ativo, interrompe o comando.
     """
 
     command: str
@@ -53,7 +53,7 @@ class CommandRequest:
     shell: str | None = None
     working_directory: str | None = None
     timeout: float | None = None
-    cancel_event: threading.Event | None = None
+    cancel_event: CancelSignal | None = None
 
 
 @dataclass(frozen=True)

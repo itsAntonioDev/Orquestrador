@@ -7,6 +7,14 @@ projects:
     repository: seu-usuario/orquestrador      # owner/repo
     secret: ${GITHUB_WEBHOOK_SECRET}          # mesmo segredo configurado no webhook
     pipeline: .orquestrador.yml               # caminho do pipeline dentro do repositório
+    notifications:                            # opcional
+      when: [failure, error]                  # success | failure | cancelled | skipped | error
+      slack:
+        webhook_url: ${SLACK_WEBHOOK_URL}     # Incoming Webhook (https)
+        channel: "#ci"
+      email:
+        to: [time@exemplo.com]                # servidor em ORQ_SMTP_*
+        subject_prefix: "[CI]"
 
   - name: app-gitlab
     provider: gitlab

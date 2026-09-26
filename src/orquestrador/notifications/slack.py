@@ -47,7 +47,9 @@ class SlackNotifier(Notifier):
                 with httpx.Client() as client:
                     response = client.post(self.webhook_url, json=payload, timeout=self.timeout)
         except httpx.HTTPError as exc:
-            raise NotificationError(f"falha ao enviar para o Slack ({exc.__class__.__name__})") from exc
+            raise NotificationError(
+                f"falha ao enviar para o Slack ({exc.__class__.__name__})"
+            ) from exc
         if not response.is_success:
             raise NotificationError(
                 f"o Slack respondeu {response.status_code}: {response.text[:200]}"

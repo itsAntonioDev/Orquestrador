@@ -50,7 +50,7 @@ def create_app(
     if repository is None:
         repository = build_repository(settings)
     active_dispatcher = dispatcher or build_dispatcher(
-        settings, registry, build_listeners(settings, repository)
+        settings, registry, build_listeners(settings, repository, registry), repository
     )
     active_repository = repository
 

@@ -1,7 +1,7 @@
 """Composition root: monta os componentes da aplicação a partir das configurações.
 
 API, worker e CLI usam estas funções, então integrações novas (persistência,
-notificações...) são conectadas num único lugar.
+secrets, notificações...) são conectadas num único lugar.
 """
 
 from __future__ import annotations
@@ -18,6 +18,7 @@ from orquestrador.dispatch import (
     RunService,
     ThreadDispatcher,
 )
+from orquestrador.dispatch.service import SecretProvider
 from orquestrador.projects import ProjectRegistry
 
 
@@ -45,12 +46,43 @@ def build_repository(settings: Settings) -> RunRepository | None:
     return RunRepository(build_database(settings))
 
 
-def build_listeners(settings: Settings, repository: RunRepository | None) -> list[RunListener]:
-    """Listeners do ciclo de vida das execuções (persistência, ...)."""
+def build_secret_provider(
+    settings: Settings, repository: RunRepository | None
+) -> SecretProvider | None:
+    """Fonte de secrets baseada no cofre, se ``ORQ_SECRET_KEYS`` e o banco estiverem configurados.
+
+    Raises:
+        SecretError: Se as chaves forem inválidas.
+    """
+    if settings.secret_keys is None or repository is None:
+        return None
+    from orquestrador.vault import SecretCipher, SecretVault
+
+    cipher = SecretCipher.from_config(settings.secret_keys.get_secret_value())
+    return SecretVault(repository.database, cipher).resolve
+
+
+def build_listeners(
+    settings: Settings,
+    repository: RunRepository | None,
+    registry: ProjectRegistry | None = None,
+) -> list[RunListener]:
+    """Listeners do ciclo de vida das execuções: persistência e notificações."""
     listeners: list[RunListener] = []
     if repository is not None:
         listeners.append(
             DatabaseRunListener(repository, max_log_lines_per_step=settings.max_log_lines_per_step)
+        )
+    if registry is not None and any(project.notifications for project in registry):
+        from orquestrador.notifications.listener import NotificationListener
+
+        listeners.append(
+            NotificationListener(
+                registry,
+                smtp=settings.smtp_settings,
+                public_url=settings.public_url,
+                timeout=settings.notification_timeout,
+            )
         )
     return listeners
 
@@ -59,14 +91,19 @@ def build_run_service(
     settings: Settings,
     registry: ProjectRegistry | None = None,
     listeners: Sequence[RunListener] | None = None,
+    repository: RunRepository | None = None,
 ) -> RunService:
     """Cria o serviço que executa pedidos (usado pelo worker e pelo dispatcher em threads)."""
+    registry = registry if registry is not None else build_registry(settings)
+    if repository is None:
+        repository = build_repository(settings)
     if listeners is None:
-        listeners = build_listeners(settings, build_repository(settings))
+        listeners = build_listeners(settings, repository, registry)
     return RunService(
         settings,
-        registry if registry is not None else build_registry(settings),
+        registry,
         listeners=listeners,
+        secret_provider=build_secret_provider(settings, repository),
     )
 
 
@@ -74,6 +111,7 @@ def build_dispatcher(
     settings: Settings,
     registry: ProjectRegistry,
     listeners: Sequence[RunListener] = (),
+    repository: RunRepository | None = None,
 ) -> Dispatcher:
     """Cria o dispatcher configurado em ``ORQ_DISPATCHER`` (``thread`` ou ``rq``).
 
@@ -85,6 +123,11 @@ def build_dispatcher(
 
         inner = RQDispatcher.from_settings(settings)
     else:
-        service = RunService(settings, registry, listeners=listeners)
+        service = RunService(
+            settings,
+            registry,
+            listeners=listeners,
+            secret_provider=build_secret_provider(settings, repository),
+        )
         inner = ThreadDispatcher(service.execute, max_workers=settings.max_concurrent_runs)
     return ListeningDispatcher(inner, listeners) if listeners else inner

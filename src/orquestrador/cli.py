@@ -17,7 +17,13 @@ from orquestrador.config import WorkerClass
 from orquestrador.console import ConsoleObserver
 from orquestrador.execution import PipelineRunner, RunContext, Status
 from orquestrador.executors import ExecutorKind, build_executor
-from orquestrador.pipeline import Pipeline, PipelineError, PipelineValidationError, load_pipeline
+from orquestrador.pipeline import (
+    Pipeline,
+    PipelineError,
+    PipelineValidationError,
+    load_pipeline,
+    pipeline_secret_references,
+)
 from orquestrador.pipeline.models import ENV_NAME_PATTERN
 
 #: Códigos de saída da CLI.
@@ -35,11 +41,12 @@ app = typer.Typer(
 )
 
 
-def parse_env_assignments(values: list[str] | None) -> dict[str, str]:
+def parse_env_assignments(values: list[str] | None, option: str = "--env") -> dict[str, str]:
     """Converte opções ``NOME=valor`` num dicionário.
 
     Args:
-        values: Valores recebidos em ``--env``.
+        values: Valores recebidos na opção.
+        option: Nome da opção, usado na mensagem de erro.
 
     Returns:
         Mapeamento de variáveis.
@@ -52,7 +59,7 @@ def parse_env_assignments(values: list[str] | None) -> dict[str, str]:
         name, separator, value = item.partition("=")
         if not separator or not ENV_NAME_PATTERN.match(name):
             raise typer.BadParameter(
-                f"use o formato NOME=valor (recebido {item!r})", param_hint="--env"
+                f"use o formato NOME=valor (recebido {item!r})", param_hint=option
             )
         env[name] = value
     return env
@@ -102,10 +109,17 @@ def run(
     image: Annotated[
         str, typer.Option(help="Imagem padrão para jobs sem 'image' (executor docker).")
     ] = "python:3.11-slim",
+    secret: Annotated[
+        list[str] | None,
+        typer.Option(
+            "--secret", "-s", help="Secret NOME=valor para ${{ secrets.NOME }} (mascarado)."
+        ),
+    ] = None,
 ) -> None:
     """Executa um pipeline localmente (no host ou em containers Docker)."""
     console = Console()
     overrides = parse_env_assignments(env)
+    secrets = parse_env_assignments(secret, option="--secret")
     pipeline = _load_or_exit(pipeline_file, console)
 
     context = RunContext(
@@ -116,6 +130,7 @@ def run(
         commit=commit,
         ref=f"refs/tags/{tag}" if tag else (f"refs/heads/{branch}" if branch else None),
         env=overrides,
+        secrets=secrets,
     )
     docker_options = {"default_image": image} if executor is ExecutorKind.DOCKER else {}
     runner = PipelineRunner(
@@ -156,6 +171,9 @@ def validate(
     for number, stage in enumerate(pipeline.execution_stages(), start=1):
         jobs = ", ".join(f"{job.id} ({len(job.steps)} steps)" for job in stage)
         console.print(Text(f"Estágio {number}: {jobs}"), soft_wrap=True)
+    references = pipeline_secret_references(pipeline)
+    if references:
+        console.print(Text(f"Secrets referenciados: {', '.join(sorted(references))}"))
 
 
 @app.command()
@@ -342,6 +360,149 @@ def history(
         )
     console.print(table)
     console.print(f"{len(page.items)} de {page.total} execuções")
+
+
+secrets_app = typer.Typer(help="Cofre de secrets criptografados.", no_args_is_help=True)
+app.add_typer(secrets_app, name="secrets")
+
+
+def _open_vault(console: Console) -> Any:
+    """Abre o cofre com ``ORQ_SECRET_KEYS`` e ``ORQ_DATABASE_URL``
+    (encerra com código 2 se faltar).
+    """
+    from orquestrador.config import Settings
+    from orquestrador.db import Database
+    from orquestrador.db.migrations import upgrade_database
+    from orquestrador.vault import SecretCipher, SecretError, SecretVault
+
+    settings = Settings()
+    if settings.secret_keys is None:
+        console.print(
+            Text(
+                "defina ORQ_SECRET_KEYS (gere uma chave com `orquestrador secrets generate-key`)",
+                style="bold red",
+            ),
+            soft_wrap=True,
+        )
+        raise typer.Exit(EXIT_INVALID)
+    try:
+        cipher = SecretCipher.from_config(settings.secret_keys.get_secret_value())
+    except SecretError as exc:
+        console.print(Text(str(exc), style="bold red"), soft_wrap=True)
+        raise typer.Exit(EXIT_INVALID) from exc
+    url = settings.effective_database_url
+    if settings.database_auto_migrate:
+        upgrade_database(url)
+    return SecretVault(Database(url), cipher)
+
+
+@secrets_app.command("generate-key")
+def secrets_generate_key() -> None:
+    """Gera uma chave nova para ORQ_SECRET_KEYS."""
+    from orquestrador.vault import SecretCipher
+
+    typer.echo(SecretCipher.generate_key())
+
+
+@secrets_app.command("set")
+def secrets_set(
+    name: Annotated[str, typer.Argument(help="Nome do secret (ex.: DEPLOY_TOKEN).")],
+    project: Annotated[
+        str | None, typer.Option(help="Projeto (padrão: secret global).")
+    ] = None,
+    value: Annotated[
+        str | None, typer.Option(help="Valor; se omitido, é lido da entrada padrão.")
+    ] = None,
+) -> None:
+    """Cria ou atualiza um secret."""
+    import sys
+
+    from orquestrador.vault import SecretError
+
+    console = Console()
+    if value is None:
+        value = (
+            typer.prompt("Valor", hide_input=True)
+            if sys.stdin.isatty()
+            else sys.stdin.read().rstrip("\r\n")
+        )
+    if not value:
+        raise typer.BadParameter("o valor não pode ser vazio", param_hint="--value")
+    vault = _open_vault(console)
+    try:
+        created = vault.set(name, value, project=project)
+    except SecretError as exc:
+        console.print(Text(str(exc), style="bold red"), soft_wrap=True)
+        raise typer.Exit(EXIT_INVALID) from exc
+    finally:
+        vault.database.dispose()
+    scope = f"projeto {project}" if project else "global"
+    typer.echo(f"secret '{name}' {'criado' if created else 'atualizado'} ({scope})")
+
+
+@secrets_app.command("list")
+def secrets_list(
+    project: Annotated[
+        str | None, typer.Option(help="Mostra só os secrets visíveis para este projeto.")
+    ] = None,
+) -> None:
+    """Lista nomes e escopos dos secrets (os valores nunca são exibidos)."""
+    from rich.table import Table
+
+    console = Console()
+    vault = _open_vault(console)
+    try:
+        items = vault.list_secrets(project)
+    finally:
+        vault.database.dispose()
+    if not items:
+        console.print("Nenhum secret cadastrado.")
+        return
+    table = Table(header_style="bold")
+    for column in ("Nome", "Escopo", "Atualizado em (UTC)"):
+        table.add_column(column)
+    for item in items:
+        table.add_row(
+            item.name,
+            f"projeto {item.project}" if item.project else "global",
+            item.updated_at.strftime("%Y-%m-%d %H:%M:%S"),
+        )
+    console.print(table)
+
+
+@secrets_app.command("delete")
+def secrets_delete(
+    name: Annotated[str, typer.Argument(help="Nome do secret.")],
+    project: Annotated[str | None, typer.Option(help="Projeto (padrão: global).")] = None,
+) -> None:
+    """Remove um secret."""
+    console = Console()
+    vault = _open_vault(console)
+    try:
+        removed = vault.delete(name, project=project)
+    finally:
+        vault.database.dispose()
+    if not removed:
+        console.print(Text(f"secret '{name}' não encontrado", style="bold red"))
+        raise typer.Exit(EXIT_FAILURE)
+    typer.echo(f"secret '{name}' removido")
+
+
+@secrets_app.command("rotate")
+def secrets_rotate() -> None:
+    """Recifra todos os secrets com a primeira chave de ORQ_SECRET_KEYS."""
+    from orquestrador.vault import SecretError
+
+    console = Console()
+    vault = _open_vault(console)
+    try:
+        count = vault.rotate()
+    except SecretError as exc:
+        console.print(Text(str(exc), style="bold red"), soft_wrap=True)
+        raise typer.Exit(EXIT_INVALID) from exc
+    finally:
+        vault.database.dispose()
+    typer.echo(f"{count} secret(s) recriptografado(s) com a chave primária")
 
 
 @app.command()
