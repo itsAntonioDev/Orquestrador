@@ -9,7 +9,7 @@ URL = "http://localhost:8000/webhooks/github"
 payload = {
     "ref": "refs/heads/main",
     "before": "0000000000000000000000000000000000000000",
-    "after": "f91ba529aeb0e191f178da62cf6d0e986c9353df",
+    "after": "0d501241674ae20713411c4677cbcc639f40f0a9",
     "repository": {
         "full_name": "itsAntonioDev/Orquestrador",
         "clone_url": "https://github.com/itsAntonioDev/Orquestrador.git",
@@ -18,8 +18,8 @@ payload = {
     },
     "pusher": {"name": "itsAntonioDev"},
     "head_commit": {
-        "id": "f91ba529aeb0e191f178da62cf6d0e986c9353df",
-        "message": "fix: corrige violacoes de line-length",
+        "id": "0d501241674ae20713411c4677cbcc639f40f0a9",
+        "message": "fix: corrige notify sem retorno e aplica ruff format",
         "author": {"name": "itsAntonioDev"},
     },
 }
