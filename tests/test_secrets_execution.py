@@ -111,9 +111,7 @@ def service_request(sha: str, event: str = "push") -> RunRequest:
     return RunRequest(project="app", trigger=trigger)
 
 
-def make_service(
-    repo: Path, tmp_path: Path, provided: list[str], **settings: object
-) -> RunService:
+def make_service(repo: Path, tmp_path: Path, provided: list[str], **settings: object) -> RunService:
     def provider(project: str) -> dict[str, str]:
         provided.append(project)
         return {"TOKEN": "segredo-do-cofre"}
@@ -274,7 +272,10 @@ class TestSecretsCli:
         scoped = self.cli.invoke(app, ["secrets", "list", "--project", "web"])
         assert "DEPLOY_TOKEN" in scoped.output and "DB_PASS" not in scoped.output
 
-        assert self.cli.invoke(app, ["secrets", "delete", "DB_PASS", "--project", "api"]).exit_code == 0
+        assert (
+            self.cli.invoke(app, ["secrets", "delete", "DB_PASS", "--project", "api"]).exit_code
+            == 0
+        )
         missing = self.cli.invoke(app, ["secrets", "delete", "DB_PASS", "--project", "api"])
         assert missing.exit_code == 1
         assert "não encontrado" in missing.output

@@ -48,7 +48,9 @@ def test_secret_references() -> None:
         {
             "j": {
                 "env": {"X": "${{ secrets.JOB }}"},
-                "steps": [{"run": "deploy ${{ secrets.RUN }}", "env": {"Y": "${{ secrets.STEP }}"}}],
+                "steps": [
+                    {"run": "deploy ${{ secrets.RUN }}", "env": {"Y": "${{ secrets.STEP }}"}}
+                ],
             }
         },
         env={"Z": "${{ secrets.GLOBAL }}"},

@@ -74,7 +74,9 @@ def html_request() -> RunRequest:
 
 class TestMessage:
     def test_build_notification(self) -> None:
-        notification = build_notification(failed_outcome(), html_request(), "https://ci.exemplo.com/")
+        notification = build_notification(
+            failed_outcome(), html_request(), "https://ci.exemplo.com/"
+        )
         assert notification.status == "failure"
         assert notification.title == "Falhou: api / teste"
         assert notification.url == "https://ci.exemplo.com/runs/run1"
@@ -145,7 +147,9 @@ class TestSlack:
         assert body["channel"] == "#ci"
 
     def test_http_error(self) -> None:
-        client = httpx.Client(transport=httpx.MockTransport(lambda r: httpx.Response(500, text="erro")))
+        client = httpx.Client(
+            transport=httpx.MockTransport(lambda r: httpx.Response(500, text="erro"))
+        )
         with pytest.raises(NotificationError, match="respondeu 500"):
             SlackNotifier(SLACK_URL, client=client).send(notification())
 
@@ -230,7 +234,11 @@ class TestEmail:
         notifier.send(build_notification(failed_outcome(), html_request(), "https://ci"))
 
         client = created[0]
-        assert (client.host, client.port, client.options["timeout"]) == ("smtp.exemplo.com", 587, 10.0)
+        assert (client.host, client.port, client.options["timeout"]) == (
+            "smtp.exemplo.com",
+            587,
+            10.0,
+        )
         assert client.started_tls
         assert client.logged_in == ("ci", "senha")
         message = client.messages[0]
@@ -350,7 +358,11 @@ class TestListener:
         ok = RecordingNotifier()
         listener = listener_with(
             NotificationConfig(),
-            [RecordingNotifier(NotificationError("Slack fora")), RecordingNotifier(RuntimeError("bug")), ok],
+            [
+                RecordingNotifier(NotificationError("Slack fora")),
+                RecordingNotifier(RuntimeError("bug")),
+                ok,
+            ],
         )
         with caplog.at_level(logging.WARNING):
             assert listener.notify(failed_outcome(), None) == 1

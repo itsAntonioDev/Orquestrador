@@ -407,9 +407,7 @@ def secrets_generate_key() -> None:
 @secrets_app.command("set")
 def secrets_set(
     name: Annotated[str, typer.Argument(help="Nome do secret (ex.: DEPLOY_TOKEN).")],
-    project: Annotated[
-        str | None, typer.Option(help="Projeto (padrão: secret global).")
-    ] = None,
+    project: Annotated[str | None, typer.Option(help="Projeto (padrão: secret global).")] = None,
     value: Annotated[
         str | None, typer.Option(help="Valor; se omitido, é lido da entrada padrão.")
     ] = None,

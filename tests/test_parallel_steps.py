@@ -82,14 +82,22 @@ class TestParsing:
         assert job.groups["testes"].fail_fast is True
         assert job.groups["testes"].max_parallel == 2
         assert job.groups["paralelo-2"].fail_fast is False
-        assert [[i for i, _ in block] for block in step_blocks(job)] == [[0], [1, 2, 3], [4, 5], [6]]
+        assert [[i for i, _ in block] for block in step_blocks(job)] == [
+            [0],
+            [1, 2, 3],
+            [4, 5],
+            [6],
+        ]
 
     @pytest.mark.parametrize(
         ("steps", "fragment"),
         [
             ([{"parallel": [{"run": "a"}]}], "ao menos 2 steps"),
             ([{"parallel": "a"}], "ao menos 2 steps"),
-            ([{"parallel": [{"run": "a"}, {"parallel": [{"run": "b"}, {"run": "c"}]}]}], "aninhados"),
+            (
+                [{"parallel": [{"run": "a"}, {"parallel": [{"run": "b"}, {"run": "c"}]}]}],
+                "aninhados",
+            ),
             ([{"parallel": [{"run": "a"}, {"run": "b"}], "timeout": 5}], "campos desconhecidos"),
             (
                 [
@@ -209,7 +217,17 @@ class TestExecution:
         print(os.environ['ORQ_STEP_GROUP'])
         """
         pipeline = make_pipeline(
-            {"j": {"steps": [{"name": "seq", "max-parallel": 1, "parallel": [py(exclusive), py(exclusive), py(exclusive)]}]}}
+            {
+                "j": {
+                    "steps": [
+                        {
+                            "name": "seq",
+                            "max-parallel": 1,
+                            "parallel": [py(exclusive), py(exclusive), py(exclusive)],
+                        }
+                    ]
+                }
+            }
         )
         job = run(pipeline, tmp_path).jobs["j"]
         assert job.status == Status.SUCCESS, [step.stderr for step in job.steps]

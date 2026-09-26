@@ -86,7 +86,7 @@ class NotificationListener(RunListener):
             )
         if config.email is not None:
             if self.smtp is None:
-                 logger.warning(
+                logger.warning(
                     "notificação por e-mail configurada, mas ORQ_SMTP_HOST não foi definido"
                 )
             else:
@@ -118,3 +118,4 @@ class NotificationListener(RunListener):
                 logger.exception(
                     "[%s] erro inesperado na notificação via %s", outcome.run_id, notifier.name
                 )
+        return delivered

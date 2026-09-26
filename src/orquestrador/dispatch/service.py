@@ -146,9 +146,7 @@ class RunService:
             )
 
         secrets: dict[str, str] = {}
-        secrets_allowed = (
-            trigger.event != "pull_request" or self.settings.secrets_for_pull_requests
-        )
+        secrets_allowed = trigger.event != "pull_request" or self.settings.secrets_for_pull_requests
         if self.secret_provider is not None and secrets_allowed:
             try:
                 secrets = dict(self.secret_provider(project.name))
