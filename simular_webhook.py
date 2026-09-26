@@ -9,7 +9,7 @@ URL = "http://localhost:8000/webhooks/github"
 payload = {
     "ref": "refs/heads/main",
     "before": "0000000000000000000000000000000000000000",
-    "after": "0d501241674ae20713411c4677cbcc639f40f0a9",
+    "after": "69528b4dd8040d004974aca38fbe907d833be879",
     "repository": {
         "full_name": "itsAntonioDev/Orquestrador",
         "clone_url": "https://github.com/itsAntonioDev/Orquestrador.git",
@@ -18,8 +18,8 @@ payload = {
     },
     "pusher": {"name": "itsAntonioDev"},
     "head_commit": {
-        "id": "0d501241674ae20713411c4677cbcc639f40f0a9",
-        "message": "fix: corrige notify sem retorno e aplica ruff format",
+        "id": "69528b4dd8040d004974aca38fbe907d833be879",
+        "message": "fix: declara dependencia cryptography usada no cofre de secrets",
         "author": {"name": "itsAntonioDev"},
     },
 }
