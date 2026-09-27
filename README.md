@@ -17,8 +17,6 @@ GitHub/GitLab, rodando em containers Docker.
 | 4 | Fila de jobs com Redis + RQ | ✅ Concluída |
 | 5 | Persistência em PostgreSQL | ✅ Concluída |
 | 6 | Dashboard web com logs ao vivo | ✅ Concluída |
-| 7 | Secrets, steps paralelos e notificações | ⏳ Pendente |
-| 8 | Autenticação, deploy e documentação | ⏳ Pendente |
 
 ## Instalação
 
