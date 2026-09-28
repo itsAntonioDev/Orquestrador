@@ -1,6 +1,6 @@
 # Orquestrador
 
-Orquestrador de CI/CD self-hosted escrito em Python — uma versão simplificada de
+Orquestrador de CI/CD self-hosted escrito em Python  uma versão simplificada de
 ferramentas como GitHub Actions e Jenkins. Pipelines são definidos em YAML e
 executados localmente ou (nas próximas fases) disparados por webhooks do
 GitHub/GitLab, rodando em containers Docker.
@@ -124,7 +124,7 @@ Configuração por ambiente (prefixo `ORQ_`, veja `.env.example`): `ORQ_PROJECTS
 ## Fila de execuções (Redis + RQ)
 
 Por padrão (`ORQ_DISPATCHER=thread`) a API executa os pipelines num pool de threads do próprio
-processo — prático para desenvolvimento. Em produção, use a fila:
+processo prático para desenvolvimento. Em produção, use a fila:
 
 ```bash
 export ORQ_DISPATCHER=rq ORQ_REDIS_URL=redis://localhost:6379/0
@@ -179,11 +179,11 @@ Sem `ORQ_DATABASE_URL`, usa SQLite em `<ORQ_DATA_DIR>/orquestrador.db` (ótimo p
 
 Ciclo de vida registrado:
 
-1. **queued** — a API registra a execução antes de enfileirar (se o Redis falhar, vira **error**).
-2. **running** — o worker marca o início; após o checkout, cria jobs e steps como *pending*.
+1. **queued** a API registra a execução antes de enfileirar (se o Redis falhar, vira **error**).
+2. **running**  o worker marca o início; após o checkout, cria jobs e steps como *pending*.
 3. Durante a execução, o `PersistenceObserver` atualiza jobs/steps e grava logs **em lotes**
    (100 linhas ou 0,5 s), com limite por step (`ORQ_MAX_LOG_LINES_PER_STEP`).
-4. **success / failure / cancelled / skipped / error** — desfecho final com duração e motivo.
+4. **success / failure / cancelled / skipped / error**  desfecho final com duração e motivo.
 
 Decisões: SQLAlchemy 2.0 tipado + Alembic (migrações versionadas, `render_as_batch` para
 SQLite); datas sempre em UTC; `ON DELETE CASCADE` em toda a hierarquia; o repositório devolve
@@ -201,7 +201,7 @@ Com `orquestrador serve` no ar, acesse `http://localhost:8000`:
 | `/projects` | Projetos configurados e a última execução de cada um (segredos nunca são exibidos) |
 
 Logs ao vivo via **WebSocket** (`/ws/runs/{run_id}`): o servidor consulta o banco periodicamente
-(`ORQ_LIVE_POLL_INTERVAL`, padrão 0,5 s) e envia só o que mudou — o estado da execução quando algo
+(`ORQ_LIVE_POLL_INTERVAL`, padrão 0,5 s) e envia só o que mudou  o estado da execução quando algo
 muda (`run`), as linhas novas de cada step (`logs`) e `end` quando termina. O navegador reconecta
 sozinho com backoff se a conexão cair.
 
@@ -315,7 +315,7 @@ src/orquestrador/
 - **Observadores**: o runner só emite eventos (`on_step_output`, `on_job_end`...).
   Console, banco de dados, WebSocket e notificações são observadores independentes.
 - **Dispatcher**: a API nunca executa pipelines na requisição; ela entrega um `RunRequest`
-  (JSON serializável) a um `Dispatcher` — pool de threads ou fila Redis + RQ. Trocar um pelo
+  (JSON serializável) a um `Dispatcher`  pool de threads ou fila Redis + RQ. Trocar um pelo
   outro na Fase 4 não mudou nenhuma linha da rota de webhooks nem do `RunService`.
 - **Adaptadores de provedor**: GitHub e GitLab implementam o mesmo `ProviderAdapter`
   (repositório, verificação, tipo de evento, parse), então há uma única rota genérica.
