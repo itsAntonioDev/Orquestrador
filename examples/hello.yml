@@ -1,5 +1,5 @@
-# Pipeline de exemplo portável (Windows/Linux/macOS).
-# Execute com:  orquestrador run examples/hello.yml --branch main
+# Portable example pipeline (Windows/Linux/macOS).
+# Run with: orquestrador run examples/hello.yml --branch main
 name: hello-orquestrador
 
 on:
