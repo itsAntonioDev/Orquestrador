@@ -1,25 +1,25 @@
-# Projetos (repositórios) aceitos pelo orquestrador.
-# Copie para projects.yml (ou aponte ORQ_PROJECTS_FILE) e ajuste.
-# Referências ${VAR} e ${VAR:-padrão} são lidas do ambiente — não versione segredos.
+# Projects (repositories) accepted by the orchestrator.
+# Copy to projects.yml (or set ORQ_PROJECTS_FILE) and adjust.
+# References ${VAR} and ${VAR:-default} are read from the environment — do not commit secrets.
 projects:
   - name: orquestrador
     provider: github
     repository: seu-usuario/orquestrador      # owner/repo
-    secret: ${GITHUB_WEBHOOK_SECRET}          # mesmo segredo configurado no webhook
-    pipeline: .orquestrador.yml               # caminho do pipeline dentro do repositório
-    notifications:                            # opcional
+    secret: ${GITHUB_WEBHOOK_SECRET}          # same secret configured in the webhook
+    pipeline: .orquestrador.yml               # pipeline path within the repository
+    notifications:                            # optional
       when: [failure, error]                  # success | failure | cancelled | skipped | error
       slack:
         webhook_url: ${SLACK_WEBHOOK_URL}     # Incoming Webhook (https)
         channel: "#ci"
       email:
-        to: [time@exemplo.com]                # servidor em ORQ_SMTP_*
+        to: [time@exemplo.com]                # server configured through ORQ_SMTP_*
         subject_prefix: "[CI]"
 
   - name: app-gitlab
     provider: gitlab
     repository: grupo/subgrupo/app            # path_with_namespace
-    secret: ${GITLAB_WEBHOOK_TOKEN}           # "Secret token" do webhook no GitLab
+    secret: ${GITLAB_WEBHOOK_TOKEN}           # GitLab webhook's "Secret token"
     pipeline: ci/pipeline.yml
-    # clone_url é opcional; sem ele usa a URL enviada no webhook.
+    # clone_url is optional; if omitted, the URL sent in the webhook is used.
     clone_url: https://gitlab.com/grupo/subgrupo/app.git

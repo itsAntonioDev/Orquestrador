@@ -1,8 +1,8 @@
-# Pipeline de CI do próprio orquestrador (dogfooding).
-# Rodar localmente: orquestrador run .orquestrador.yml
+# CI pipeline for the orchestrator itself (dogfooding).
+# Run locally: orquestrador run .orquestrador.yml
 name: orquestrador-ci
 
-# Usada pelo executor docker; o executor local ignora.
+# Used by the Docker executor; ignored by the local executor.
 image: python:3.11-slim
 
 on:

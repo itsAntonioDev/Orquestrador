@@ -40,7 +40,7 @@ if TYPE_CHECKING:
 
 IS_WINDOWS = os.name == "nt"
 
-#: Intervalo de verificação de timeout/cancelamento enquanto o processo roda.
+#: Timeout/cancellation polling interval while the process is running.
 _POLL_INTERVAL = 0.05
 
 

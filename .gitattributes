@@ -1,5 +1,5 @@
-# Normaliza finais de linha: LF no repositório e no working tree,
-# exceto scripts específicos do Windows.
+# Normalize line endings: LF in the repository and working tree,
+# except for Windows-specific scripts.
 * text=auto eol=lf
 *.cmd text eol=crlf
 *.bat text eol=crlf

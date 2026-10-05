@@ -9,7 +9,7 @@ from sqlalchemy.engine import Dialect
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.types import TypeDecorator
 
-#: Nomes determinísticos para constraints e índices (necessário para migrações estáveis).
+#: Deterministic constraint and index names (required for stable migrations).
 NAMING_CONVENTION = {
     "ix": "ix_%(table_name)s_%(column_0_N_name)s",
     "uq": "uq_%(table_name)s_%(column_0_N_name)s",

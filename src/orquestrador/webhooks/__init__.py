@@ -11,7 +11,7 @@ from orquestrador.webhooks.base import (
 from orquestrador.webhooks.events import TriggerEvent
 from orquestrador.webhooks.matching import event_matches_triggers, matches_patterns
 
-#: Adaptador de cada provedor suportado.
+#: Adapter for each supported provider.
 ADAPTERS: dict[Provider, ProviderAdapter] = {
     Provider.GITHUB: github.ADAPTER,
     Provider.GITLAB: gitlab.ADAPTER,

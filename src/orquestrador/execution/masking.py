@@ -5,7 +5,7 @@ from __future__ import annotations
 import re
 from collections.abc import Iterable
 
-#: Texto que substitui um secret.
+#: Text used to replace a secret.
 MASK = "***"
 
 

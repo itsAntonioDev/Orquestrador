@@ -24,14 +24,14 @@ if TYPE_CHECKING:
 
 StreamName = Literal["stdout", "stderr", "system"]
 
-#: Callback chamado a cada linha de saída: ``(stream, texto)``.
+#: Callback invoked for each output line: ``(stream, text)``.
 OutputCallback = Callable[[StreamName, str], None]
 
-#: Código de saída quando o comando excede o tempo limite (convenção do ``timeout(1)``).
+#: Exit code when a command times out (``timeout(1)`` convention).
 EXIT_TIMEOUT = 124
-#: Código de saída quando o executável não é encontrado (convenção do shell).
+#: Exit code when the executable is not found (shell convention).
 EXIT_NOT_FOUND = 127
-#: Código de saída quando a execução é cancelada (128 + SIGINT).
+#: Exit code when execution is cancelled (128 + SIGINT).
 EXIT_CANCELLED = 130
 
 
@@ -93,7 +93,7 @@ class JobSession(ABC):
             O resultado do comando.
         """
 
-    def close(self) -> None:  # noqa: B027 - implementação padrão intencionalmente vazia
+    def close(self) -> None:  # noqa: B027 - intentionally empty default implementation
         """Libera os recursos da sessão (padrão: nada a fazer)."""
 
     def __enter__(self) -> Self:

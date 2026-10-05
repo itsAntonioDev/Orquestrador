@@ -6,7 +6,7 @@ from datetime import UTC, datetime
 
 from orquestrador.db.schemas import RunStatus
 
-#: Rótulos em português de cada status.
+#: Portuguese labels for each status.
 STATUS_LABELS: dict[str, str] = {
     RunStatus.PENDING.value: "Pendente",
     RunStatus.QUEUED.value: "Na fila",
@@ -18,7 +18,7 @@ STATUS_LABELS: dict[str, str] = {
     RunStatus.ERROR.value: "Erro",
 }
 
-#: Status que fazem sentido como filtro da listagem (execuções nunca ficam "pending").
+#: Valid status filters for the run list (runs are never "pending").
 FILTERABLE_STATUSES: list[RunStatus] = [
     status for status in RunStatus if status != RunStatus.PENDING
 ]

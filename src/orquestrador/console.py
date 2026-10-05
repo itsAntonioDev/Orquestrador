@@ -13,7 +13,7 @@ from orquestrador.execution.events import RunObserver
 from orquestrador.execution.results import JobResult, LogLine, PipelineResult, Status, StepResult
 from orquestrador.pipeline.models import Job, Pipeline, Step
 
-#: Rótulo e estilo de cada status. Rótulos ASCII funcionam em qualquer terminal.
+#: Label and style for each status. ASCII labels work in any terminal.
 STATUS_STYLES: dict[Status, tuple[str, str]] = {
     Status.PENDING: ("PENDENTE", "dim"),
     Status.QUEUED: ("NA FILA", "dim"),

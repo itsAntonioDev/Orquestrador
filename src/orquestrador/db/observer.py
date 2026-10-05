@@ -131,7 +131,7 @@ class PersistenceObserver(RunObserver):
                 and step_result.status.is_terminal
                 and not step_result.started_at
             ):
-                # Steps que nunca iniciaram (job ignorado/cancelado) não recebem on_step_end.
+                # Steps that never started (skipped/cancelled job) do not receive on_step_end.
                 self.repository.update_step(step_id, step_result)
 
     def on_pipeline_end(self, pipeline: Pipeline, result: PipelineResult) -> None:

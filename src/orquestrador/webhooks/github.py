@@ -22,7 +22,7 @@ SIGNATURE_HEADER = "X-Hub-Signature-256"
 EVENT_HEADER = "X-GitHub-Event"
 DELIVERY_HEADER = "X-GitHub-Delivery"
 
-#: Ações de pull request que representam código novo a validar.
+#: Pull request actions representing new code to validate.
 PULL_REQUEST_ACTIONS = frozenset({"opened", "synchronize", "reopened", "ready_for_review"})
 
 

@@ -14,7 +14,7 @@ import shutil
 from dataclasses import dataclass
 from pathlib import Path
 
-#: Marcador substituído pelo caminho do script.
+#: Placeholder replaced with the script path.
 SCRIPT_PLACEHOLDER = "{0}"
 
 

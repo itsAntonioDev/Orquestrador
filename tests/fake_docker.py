@@ -11,7 +11,7 @@ from typing import Any
 from docker.errors import ImageNotFound
 
 Chunk = tuple[bytes | None, bytes | None]
-#: Comportamento de um ``exec``: gerador que recebe (info do exec, cliente) e produz fragmentos.
+#: Behavior of an ``exec``: generator receiving (exec info, client) and yielding chunks.
 ExecBehaviour = Callable[[dict[str, Any], "FakeDockerClient"], Iterator[Chunk]]
 
 

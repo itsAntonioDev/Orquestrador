@@ -33,7 +33,7 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-#: Caminho importável da tarefa executada pelos workers.
+#: Importable path of the task executed by workers.
 TASK_PATH = "orquestrador.dispatch.rq_queue.execute_run_request"
 
 

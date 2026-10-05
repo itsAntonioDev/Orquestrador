@@ -21,7 +21,7 @@ TOKEN_HEADER = "X-Gitlab-Token"
 EVENT_HEADER = "X-Gitlab-Event"
 DELIVERY_HEADER = "X-Gitlab-Event-UUID"
 
-#: SHA "nulo" usado pelo GitLab quando uma branch/tag é removida.
+#: "Null" SHA used by GitLab when a branch/tag is deleted.
 NULL_SHA = "0" * 40
 
 PUSH_EVENTS = frozenset({"Push Hook", "Tag Push Hook"})

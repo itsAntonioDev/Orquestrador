@@ -3,13 +3,13 @@ import hmac
 import json
 import urllib.request
 
-SECRET = "segredo-teste-123"  # mesmo valor do GITHUB_WEBHOOK_SECRET
+SECRET = "segredo-teste-123"  # same value as GITHUB_WEBHOOK_SECRET
 URL = "http://localhost:8000/webhooks/github"
 
 payload = {
     "ref": "refs/heads/main",
     "before": "0000000000000000000000000000000000000000",
-    "after": "69528b4dd8040d004974aca38fbe907d833be879",
+    "after": "6be27205271e22af320b38bd9fd59dac40d090b4",
     "repository": {
         "full_name": "itsAntonioDev/Orquestrador",
         "clone_url": "https://github.com/itsAntonioDev/Orquestrador.git",
@@ -18,8 +18,8 @@ payload = {
     },
     "pusher": {"name": "itsAntonioDev"},
     "head_commit": {
-        "id": "69528b4dd8040d004974aca38fbe907d833be879",
-        "message": "fix: declara dependencia cryptography usada no cofre de secrets",
+        "id": "6be27205271e22af320b38bd9fd59dac40d090b4",
+        "message": "chore: corrige newline final do script de teste",
         "author": {"name": "itsAntonioDev"},
     },
 }

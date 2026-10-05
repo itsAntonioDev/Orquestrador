@@ -53,17 +53,17 @@ logger = logging.getLogger(__name__)
 
 PullPolicy = Literal["always", "if-not-present", "never"]
 
-#: Onde o workspace é montado dentro do container.
+#: Where the workspace is mounted inside the container.
 CONTAINER_WORKSPACE = "/workspace"
-#: Onde os scripts dos steps são gravados dentro do container.
+#: Where step scripts are written inside the container.
 SCRIPTS_DIR = "/tmp/orquestrador"
 
 _POLL_INTERVAL = 0.05
 _KILL_GRACE = 5.0
 _WINDOWS_DRIVE = re.compile(r"^[A-Za-z]:[\\/]")
 
-#: Mata recursivamente o processo cujo PID está no arquivo ``$0`` e seus descendentes,
-#: percorrendo ``/proc`` (não depende de ``pkill``/``procps``).
+#: Recursively kill the process whose PID is in file ``$0`` and its descendants,
+#: by traversing ``/proc`` (does not depend on ``pkill``/``procps``).
 KILL_TREE_SCRIPT = (
     "kill_tree() { for p in /proc/[0-9]*; do "
     'ppid=$(cut -d" " -f4 "$p/stat" 2>/dev/null); '
@@ -72,7 +72,7 @@ KILL_TREE_SCRIPT = (
     'pid=$(cat "$0" 2>/dev/null) && [ -n "$pid" ] && kill_tree "$pid"; true'
 )
 
-#: Grava o PID do step num arquivo e substitui o shell pelo comando real.
+#: Write the step PID to a file and replace the shell with the actual command.
 PID_WRAPPER_SCRIPT = 'echo $$ > "$1" && shift && exec "$@"'
 
 

@@ -22,7 +22,7 @@ from orquestrador.db.session import Database
 from orquestrador.execution.results import utcnow
 from orquestrador.pipeline.models import ENV_NAME_PATTERN
 
-#: Valor de ``project`` usado para secrets globais.
+#: ``project`` value used for global secrets.
 GLOBAL_SCOPE = ""
 
 

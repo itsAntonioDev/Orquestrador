@@ -33,7 +33,7 @@ from orquestrador.pipeline.models import Job, Pipeline, Step
 
 logger = logging.getLogger(__name__)
 
-#: Motivo registrado em steps interrompidos pelo ``fail-fast`` de um grupo paralelo.
+#: Reason recorded for steps interrupted by a parallel group's ``fail-fast``.
 FAIL_FAST_REASON = "cancelado: outro step do grupo paralelo falhou (fail-fast)"
 
 StepBlock = list[tuple[int, Step]]

@@ -8,7 +8,7 @@ from alembic import context
 from sqlalchemy import engine_from_config, pool
 from sqlalchemy.engine import Connection
 
-from orquestrador.db import models  # noqa: F401 - registra as tabelas no metadata
+from orquestrador.db import models  # noqa: F401 - register tables in metadata
 from orquestrador.db.base import Base, UTCDateTime
 
 config = context.config

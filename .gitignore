@@ -6,14 +6,14 @@ build/
 dist/
 .eggs/
 
-# Ambientes
+# Environments
 .venv/
 venv/
 .env
 .env.*
 !.env.example
 
-# Ferramentas
+# Tools
 .pytest_cache/
 .ruff_cache/
 .mypy_cache/
@@ -21,7 +21,7 @@ venv/
 coverage.xml
 htmlcov/
 
-# Dados locais do orquestrador
+# Local orchestrator data
 projects.yml
 *.db
 *.sqlite3
@@ -35,7 +35,7 @@ workspaces/
 *.tfvars
 !*.tfvars.example
 
-# IDE / SO
+# IDE / OS
 .vscode/
 .idea/
 .DS_Store

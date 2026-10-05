@@ -13,16 +13,16 @@ from typing import Annotated, Any
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-#: Identificadores de jobs: letras, dígitos, ``_`` e ``-``, começando por letra ou ``_``.
+#: Job identifiers: letters, digits, ``_`` and ``-``, starting with a letter or ``_``.
 IDENTIFIER_PATTERN = re.compile(r"^[A-Za-z_][A-Za-z0-9_-]*$")
 
-#: Nome de variável de ambiente válido (POSIX).
+#: Valid environment variable name (POSIX).
 ENV_NAME_PATTERN = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
 
-#: ``origem:/destino`` ou ``origem:/destino:ro|rw`` (origem pode conter ``C:\``).
+#: ``source:/destination`` or ``source:/destination:ro|rw`` (source may contain ``C:\``).
 VOLUME_SPEC_PATTERN = re.compile(r"^(?P<source>.+?):(?P<target>/[^:]*)(?::(?P<mode>ro|rw))?$")
 
-#: Nome de volume nomeado do Docker (sem barras: não é caminho do host).
+#: Docker named volume name (no slashes: not a host path).
 NAMED_VOLUME_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]*$")
 
 
@@ -164,7 +164,7 @@ class VolumeMount(StrictModel):
         return bool(NAMED_VOLUME_PATTERN.match(self.source))
 
 
-#: Chaves aceitas num bloco ``parallel`` de steps.
+#: Accepted keys in a ``parallel`` step block.
 PARALLEL_BLOCK_KEYS = frozenset(
     {"parallel", "name", "fail-fast", "fail_fast", "max-parallel", "max_parallel"}
 )
@@ -403,7 +403,7 @@ class Pipeline(StrictModel):
         stages: list[list[Job]] = []
         while remaining:
             ready = [job for job in remaining.values() if set(job.needs) <= done]
-            # O validador de ciclos garante que ``ready`` nunca fica vazio.
+            # The cycle validator ensures that ``ready`` is never empty.
             stages.append(ready)
             for job in ready:
                 done.add(job.id)

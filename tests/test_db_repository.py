@@ -147,7 +147,7 @@ def test_update_job_and_step(repository: RunRepository) -> None:
 
     repository.update_job(ids.jobs["build"], job)
     repository.update_step(ids.steps[("build", 1)], step, truncated_lines=5)
-    repository.update_job(999_999, job)  # inexistente: ignorado
+    repository.update_job(999_999, job)  # does not exist: ignored
 
     run = repository.get_run("run1")
     assert run is not None

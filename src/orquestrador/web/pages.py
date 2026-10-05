@@ -15,7 +15,7 @@ from orquestrador.web.templating import templates
 
 router = APIRouter(include_in_schema=False)
 
-#: Execuções por página na listagem.
+#: Runs per page in the list.
 PAGE_SIZE = 25
 
 

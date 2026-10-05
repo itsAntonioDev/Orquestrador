@@ -13,7 +13,7 @@ from sqlalchemy.pool import NullPool
 
 from orquestrador.db.session import ensure_sqlite_directory
 
-#: Diretório com ``env.py`` e ``versions/`` (distribuído junto com o pacote).
+#: Directory with ``env.py`` and ``versions/`` (distributed with the package).
 MIGRATIONS_DIR = Path(__file__).parent / "alembic"
 
 

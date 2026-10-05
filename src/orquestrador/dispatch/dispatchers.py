@@ -41,7 +41,7 @@ class Dispatcher(ABC):
             Exception: Se não for possível agendar (ex.: fila indisponível).
         """
 
-    def shutdown(self, *, wait: bool = True) -> None:  # noqa: B027 - opcional por design
+    def shutdown(self, *, wait: bool = True) -> None:  # noqa: B027 - optional by design
         """Libera recursos (padrão: nada a fazer).
 
         Args:

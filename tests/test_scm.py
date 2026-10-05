@@ -83,4 +83,4 @@ def test_remove_tree_handles_git_readonly_files(git_repo: GitRepoFactory, tmp_pa
     checkout(str(repo), sha, destination)
     remove_tree(destination)
     assert not destination.exists()
-    remove_tree(destination)  # não existe mais: não deve falhar
+    remove_tree(destination)  # no longer exists: should not fail

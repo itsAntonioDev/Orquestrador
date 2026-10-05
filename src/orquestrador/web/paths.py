@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-#: Diretório dos templates Jinja2.
+#: Jinja2 templates directory.
 TEMPLATES_DIR = Path(__file__).parent / "templates"
-#: Diretório dos arquivos estáticos (CSS, JS).
+#: Static files directory (CSS, JS).
 STATIC_DIR = Path(__file__).parent / "static"

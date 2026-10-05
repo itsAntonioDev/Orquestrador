@@ -8,7 +8,7 @@ import subprocess
 from collections.abc import Sequence
 from pathlib import Path
 
-#: Protocolos permitidos ao git (bloqueia ``ext::`` e similares).
+#: Protocols allowed for git (blocks ``ext::`` and similar protocols).
 ALLOWED_PROTOCOLS = "file:git:http:https:ssh"
 
 _COMMIT_PATTERN = re.compile(r"^[0-9a-fA-F]{7,64}$")

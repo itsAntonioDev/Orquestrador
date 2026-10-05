@@ -24,7 +24,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from orquestrador.db.base import Base, UTCDateTime
 
-#: Chave primária inteira grande, com autoincremento também no SQLite.
+#: Big integer primary key, with auto-increment support on SQLite as well.
 BigIntPK = BigInteger().with_variant(Integer, "sqlite")
 
 

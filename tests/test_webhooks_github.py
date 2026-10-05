@@ -55,7 +55,7 @@ class TestSignature:
         assert github.verify_signature(SECRET, body, github.compute_signature(SECRET, body))
 
     def test_signature_is_known_hmac_sha256(self) -> None:
-        # Vetor de exemplo da documentação do GitHub.
+        # Example test vector from the GitHub documentation.
         signature = github.compute_signature("It's a Secret to Everybody", b"Hello, World!")
         assert signature == (
             "sha256=757107ea0eb2509fc211221cce984b8a37570b6d7586c22c46f4379c8b043e17"

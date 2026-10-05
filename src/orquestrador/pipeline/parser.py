@@ -92,7 +92,7 @@ _PipelineLoader.add_constructor(
     _construct_mapping_without_duplicates,
 )
 
-#: Tradução das mensagens mais comuns do Pydantic.
+#: Translations of the most common Pydantic messages.
 _MESSAGES: dict[str, str] = {
     "missing": "campo obrigatório",
     "extra_forbidden": "campo desconhecido",

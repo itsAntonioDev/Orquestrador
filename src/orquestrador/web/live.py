@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
-#: Código de fechamento quando o servidor não consegue atender (RFC 6455).
+#: Close code when the server cannot handle the request (RFC 6455).
 CLOSE_INTERNAL_ERROR = 1011
 
 

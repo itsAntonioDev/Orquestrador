@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 
 ExecutorFactory = Callable[[], Executor]
 ObserverFactory = Callable[[RunRequest], Iterable[RunObserver]]
-#: Recebe o nome do projeto e devolve os secrets disponíveis para ele.
+#: Receive a project name and return its available secrets.
 SecretProvider = Callable[[str], Mapping[str, str]]
 
 

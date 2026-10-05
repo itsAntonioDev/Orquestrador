@@ -26,7 +26,7 @@ from orquestrador.pipeline import (
 )
 from orquestrador.pipeline.models import ENV_NAME_PATTERN
 
-#: Códigos de saída da CLI.
+#: CLI exit codes.
 EXIT_SUCCESS = 0
 EXIT_FAILURE = 1
 EXIT_INVALID = 2

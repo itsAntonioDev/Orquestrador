@@ -114,7 +114,7 @@ class RunRepository:
         """
         self.database = database
 
-    # ------------------------------------------------------------------ escrita
+    # ------------------------------------------------------------------ writes
 
     def create_run(self, request: RunRequest, status: RunStatus = RunStatus.QUEUED) -> bool:
         """Registra uma execução nova.
@@ -271,7 +271,7 @@ class RunRepository:
             session.delete(row)
             return True
 
-    # ------------------------------------------------------------------ leitura
+    # ------------------------------------------------------------------ reads
 
     def list_runs(
         self,
