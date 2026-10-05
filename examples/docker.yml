@@ -1,15 +1,15 @@
-# Pipeline executado em containers Docker.
-# Execute com:  orquestrador run examples/docker.yml --executor docker
+# Pipeline executed in Docker containers.
+# Run with: orquestrador run examples/docker.yml --executor docker
 name: build-em-containers
 
-image: python:3.11-slim          # imagem padrão dos jobs
+image: python:3.11-slim          # default image for jobs
 
 env:
   PIP_DISABLE_PIP_VERSION_CHECK: "1"
 
 jobs:
   info:
-    image: alpine:3.20             # sobrescreve a imagem padrão
+    image: alpine:3.20             # overrides the default image
     steps:
       - name: sistema do container
         run: |
@@ -19,8 +19,8 @@ jobs:
   python:
     needs: info
     volumes:
-      - pip-cache:/root/.cache/pip           # volume nomeado (persistente entre execuções)
-      - ./artefatos:/artefatos               # relativo ao workspace
+      - pip-cache:/root/.cache/pip           # named volume (persistent between executions)
+      - ./artefatos:/artefatos               # relative to the workspace
     steps:
       - name: versão do python
         run: python --version
